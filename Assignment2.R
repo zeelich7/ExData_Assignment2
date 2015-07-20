@@ -6,10 +6,10 @@ NEI <- readRDS("summarySCC_PM25.rds")
 SCC <- readRDS("Source_Classification_Code.rds")
 
 #Calculate total emissions 
-totalEmissions<-aggregate(x=list(total=NEI$Emissions),by=list(year=NEI$year), FUN=mean)
+totalEmissions<-aggregate(x=list(total=NEI$Emissions),by=list(year=NEI$year), FUN=sum)
 
 #Plot emissions by year to see the trend
-png(filename = "plot2.png",width = 480, height = 480, units = "px", bg = "transparent")
+png(filename = "plot1.png",width = 480, height = 480, units = "px", bg = "transparent")
 plot(totalEmissions$year,totalEmissions$total,xlab="Year",ylab="Total Emissions",type="l")
 dev.off()
 
@@ -24,7 +24,7 @@ SCC <- readRDS("Source_Classification_Code.rds")
 
 #Calculate total emissions for Baltimore
 Baltimore<-subset(NEI,fips=="24510")
-totalEmissionsBaltimore<-aggregate(x=list(total=Baltimore$Emissions),by=list(year=Baltimore$year), FUN=mean)
+totalEmissionsBaltimore<-aggregate(x=list(total=Baltimore$Emissions),by=list(year=Baltimore$year), FUN=sum)
 
 #Plot emissions by year to see the trend
 png(filename = "plot2.png",width = 480, height = 480, units = "px", bg = "transparent")
@@ -42,13 +42,13 @@ SCC <- readRDS("Source_Classification_Code.rds")
 
 #Calculate total emissions for Baltimore
 Baltimore<-subset(NEI,fips=="24510")
-totalByType<-aggregate(x=list(total=Baltimore$Emissions),by=list(year=Baltimore$year,type=Baltimore$type), FUN=mean)
+totalByType<-aggregate(x=list(total=Baltimore$Emissions),by=list(year=Baltimore$year,type=Baltimore$type), FUN=sum)
 
 #Plot emissions by year for each type to see the trend
 png(filename = "plot3.png",width = 480, height = 480, units = "px")
 ggplot(totalByType, aes(year, total)) +
   geom_line(aes(color=type))+
-  labs(title = "Total Emission by Year per Type", x = "Year", y = "Total Emissions")
+  labs(title = "Baltimore - Total Emission by Year per Type", x = "Year", y = "Total Emissions")
 dev.off()
 
 
@@ -60,3 +60,35 @@ dev.off()
 NEI <- readRDS("summarySCC_PM25.rds")
 SCC <- readRDS("Source_Classification_Code.rds")
 
+#Get a subset of the coal related rows
+coal_related <- grepl("coal", SCC$Short.Name, ignore.case=TRUE)
+coal_related <- SCC[coal_related, ]
+coal_related <- NEI[NEI$SCC %in% coal_related$SCC, ]
+
+#Get the total coal related emissions per year 
+coal_emissions <- aggregate(x=list(total=coal_related$Emissions), by=list(year=coal_related$year), FUN = sum)
+
+#Plot emissions by year for each type to see the trend
+png(filename = "plot4.png",width = 480, height = 480, units = "px", bg = "transparent")
+plot(coal_emissions$year,coal_emissions$total,xlab="Year",ylab="Total Emissions",type="l")
+dev.off()
+
+
+
+#Plot 5
+##How have emissions from motor vehicle sources changed from 1999-2008 in Baltimore City?
+#Read in the data
+NEI <- readRDS("summarySCC_PM25.rds")
+SCC <- readRDS("Source_Classification_Code.rds")
+
+#Calculate total emissions for Baltimore
+Baltimore<-subset(NEI,fips=="24510")
+motor <- grep("motor", SCC$Short.Name, ignore.case = TRUE)
+motor <- SCC[motor, ]
+Baltimore_motor <- subset[Baltimore$SCC %in% motor$SCC, ]
+total<-aggregate(x=list(total=Baltimore_motor$Emissions),by=list(year=Baltimore_motor$year), FUN=sum)
+
+#Plot emissions by year to see the trend
+png(filename = "plot2.png",width = 480, height = 480, units = "px", bg = "transparent")
+plot(totalEmissionsBaltimore$year,totalEmissionsBaltimore$total,xlab="Year",ylab="Total Emissions",type="l")
+dev.off()

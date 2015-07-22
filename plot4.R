@@ -15,5 +15,5 @@ coal_emissions <- aggregate(x=list(total=coal_related$Emissions), by=list(year=c
 
 #Plot emissions by year for each type to see the trend
 png(filename = "plot4.png",width = 480, height = 480, units = "px", bg = "transparent")
-plot(coal_emissions$year,coal_emissions$total,xlab="Year",ylab="Total Emissions",type="l")
+plot(coal_emissions$year,coal_emissions$total,xlab="Year",ylab=expression("Total PM "[2.5]*" Emissions"),main="Total Emissions from Coal Sources", type="l")
 dev.off()

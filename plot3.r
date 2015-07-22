@@ -14,5 +14,5 @@ totalByType<-aggregate(x=list(total=Baltimore$Emissions),by=list(year=Baltimore$
 png(filename = "plot3.png",width = 480, height = 480, units = "px")
 ggplot(totalByType, aes(year, total)) +
   geom_line(aes(color=type))+
-  labs(title = "Baltimore - Total Emission by Year per Type", x = "Year", y = "Total Emissions")
+  labs(title = "Baltimore - Total Emissions by Year per Type", x = "Year", y = "Total Emissions")
 dev.off()
